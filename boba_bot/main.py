@@ -9,7 +9,7 @@ import os
 load_dotenv()
 yelp_api = YelpAPI(os.getenv('yelp_api_key'), timeout_s = 3.0)
 
-client = discord.Client()
+client = discord.Client()#Initialize discord client so bot can be logged in
 engine = create_engine('sqlite:///database.db') #Create SQLAlchemy engine
 Base.metadata.create_all(engine) #Create database tables
 Session = sessionmaker(engine) #Define Session class
@@ -25,7 +25,7 @@ def remove_first_word(string):
 
 @client.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(client))
+    print(f"Logged in as {client.user}")
 
 #Functions to be triggered depending on user input
 @client.event
@@ -46,6 +46,7 @@ async def on_message(message):
         for user in db.query(User.username, User.user_id).filter_by(user_id = message.author.id):
             await message.channel.send(f"Displaying current author's queried database info: {user[0]}. Discord ID: {user[1]}.")
 
+    #Displays a list of boba shops near user's entered location
     if message.content.startswith('$boba'):
         location = remove_first_word(message.content)
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
@@ -56,3 +57,13 @@ async def on_message(message):
             store_names.append(store['name'])
 
         await message.channel.send(store_names)
+
+    #Allow user to save their current location
+    if message.content.startswith('$location'):
+        location = remove_first_word(message.content)
+        user = db.query(User).filter_by(user_id = message.author.id).one()
+        user.location = location
+        db.commit()
+
+        for new_location in db.query(User.location).filter_by(user_id = message.author.id):
+            await message.channel.send(f"{new_location[0]} has been set as {message.author.mention}'s location!")
