@@ -10,12 +10,13 @@ load_dotenv()
 yelp_api = YelpAPI(os.getenv('yelp_api_key'), timeout_s = 3.0)
 
 client = discord.Client()
-engine = create_engine('sqlite:///database.db')
-Base.metadata.create_all(engine)
-Session = sessionmaker(engine)
-Session.configure(bind = engine)
-db = Session()
+engine = create_engine('sqlite:///database.db') #Create SQLAlchemy engine
+Base.metadata.create_all(engine) #Create database tables
+Session = sessionmaker(engine) #Define Session class
+Session.configure(bind = engine) #Connect Session class to the engine
+db = Session() #Initialize Session class as db
 
+#Removes the first (trigger) word from user bot call
 def remove_first_word(string):
     string_list = string.split(' ')
     omit_first_word = string_list[1:]
@@ -26,6 +27,7 @@ def remove_first_word(string):
 async def on_ready():
     print('Logged in as {0.user}'.format(client))
 
+#Functions to be triggered depending on user input
 @client.event
 async def on_message(message):
     if message.author == client.user:
