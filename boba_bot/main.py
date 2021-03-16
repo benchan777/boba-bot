@@ -34,6 +34,18 @@ async def on_message(message):
         return
     
     if message.content.startswith('$test'):
+        # print(message.author)
+        # print(message.author.id)
+        # new_user = User(
+        #     user_id = message.author.id,
+        #     username = f"{message.author.name}#{message.author.discriminator}"
+        # )
+        # db.add(new_user)
+        # db.commit()
+        pass
+
+    #Displays a list of boba shops near user's entered location
+    if message.content.startswith('$boba'):
         print(message.author)
         print(message.author.id)
         new_user = User(
@@ -43,21 +55,33 @@ async def on_message(message):
         db.add(new_user)
         db.commit()
 
-        for user in db.query(User.username, User.user_id).filter_by(user_id = message.author.id):
-            await message.channel.send(f"Displaying current author's queried database info: {user[0]}. Discord ID: {user[1]}.")
+        for i in (db.query(User.location).filter_by(user_id = message.author.id)):
+            location = i
 
-    #Displays a list of boba shops near user's entered location
-    if message.content.startswith('$boba'):
-        location = remove_first_word(message.content)
-        result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
-        store_info = result['businesses']
+        if location[0] is None:
+            location = remove_first_word(message.content)
+            result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
+            store_info = result['businesses']
 
-        store_names = []
-        for store in store_info:
-            store_names.append(store['name'])
+            store_names = []
+            for store in store_info:
+                store_names.append(store['name'])
 
-        await message.channel.send(store_names)
+            print('using user specified location')
+            await message.channel.send(f"Displaying stores in {location}: {store_names}")
+        
+        else:
+            # stored_location = db.query(User.location).filter_by(user_id = message.author.id)
+            stored_result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
+            stored_store_info = stored_result['businesses']
 
+            stored_store_names = []
+            for store in stored_store_info:
+                stored_store_names.append(store['name'])
+            
+            print('using stored location')
+            await message.channel.send(f"Your stored location is {location[0]}! Displaying boba stores in {location[0]}:\n{stored_store_names}")
+            
     #Allow user to save their current location
     if message.content.startswith('$location'):
         location = remove_first_word(message.content)
