@@ -152,3 +152,4 @@ dmypy.json
 .DS_STORE
 .vscode
 /recipe_tracker_app/database.db
+database.db
