@@ -7,5 +7,6 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True)
-    name = Column(String(80))
-    username = Column(String(80))
+    user_id = Column(Integer)
+    username = Column(String(200))
+    location = Column(String(200))

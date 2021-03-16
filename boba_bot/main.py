@@ -34,13 +34,17 @@ async def on_message(message):
         return
     
     if message.content.startswith('$test'):
+        print(message.author)
         print(message.author.id)
         new_user = User(
-            name = 'test_name',
-            username = 'test_username'
+            user_id = message.author.id,
+            username = f"{message.author.name}#{message.author.discriminator}"
         )
         db.add(new_user)
         db.commit()
+
+        for user in db.query(User.username, User.user_id).filter_by(user_id = message.author.id):
+            await message.channel.send(f"Displaying current author's queried database info: {user[0]}. Discord ID: {user[1]}.")
 
     if message.content.startswith('$boba'):
         location = remove_first_word(message.content)
