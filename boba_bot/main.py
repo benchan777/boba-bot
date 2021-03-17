@@ -17,27 +17,9 @@ Session = sessionmaker(engine) #Define Session class
 Session.configure(bind = engine) #Connect Session class to the engine
 db = Session() #Initialize Session class as db
 
-#Removes the first (trigger) word from user bot call
-def remove_first_word(string):
-    string_list = string.split(' ')
-    omit_first_word = string_list[1:]
-    new_string = ' '.join(omit_first_word)
-    return new_string
-
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-
-@bot.command(pass_context = True)
-async def test(ctx):
-    print(ctx.message.author)
-    print(ctx.author.id)
-    new_user = User(
-        user_id = ctx.message.author.id,
-        username = f"{ctx.message.author.name}#{ctx.message.author.discriminator}"
-    )
-    db.add(new_user)
-    db.commit()
 
 @bot.command(pass_context = True)
 async def location(ctx, *args):
@@ -46,13 +28,12 @@ async def location(ctx, *args):
     user.location = location
     db.commit()
 
-    for new_location in db.query(User.location).filter_by(user_id = ctx.message.author.id):
-        await ctx.send(f"{new_location[0]} has been set as {ctx.message.author.mention}'s location!")
+    new_location = db.query(User.location).filter_by(user_id = ctx.message.author.id).one()
+    await ctx.send(f"{new_location} has been set as {ctx.message.author.mention}'s location!")
 
 @bot.command(pass_context = True)
 async def boba(ctx, *args):
-    for i in db.query(User.location).filter_by(user_id = ctx.message.author.id):
-        location = i
+    location = db.query(User.location).filter_by(user_id = ctx.message.author.id)
 
     if location[0] is None:
         location = ' '.join(args)
@@ -67,7 +48,6 @@ async def boba(ctx, *args):
         await ctx.send(f"Displaying stores in {location}: {store_names}")
     
     else:
-        # stored_location = db.query(User.location).filter_by(user_id = message.author.id)
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
 
@@ -77,6 +57,22 @@ async def boba(ctx, *args):
         
         print('using stored location')
         await ctx.send(f"Your stored location is {location[0]}!\nDisplaying boba stores in {location[0]}:\n{store_names}")
+
+@bot.command(pass_context = True)
+async def store_members(ctx):
+    for member in ctx.guild.members:
+        print(member)
+
+        user = db.query(User.username).filter_by(user_id = member.id).first()
+        print(user)
+
+        if user is None:
+            new_user = User(
+                user_id = member.id,
+                username = f"{member.name}#{member.discriminator}"
+            )
+            db.add(new_user)
+            db.commit()
 
 # #Functions to be triggered depending on user input
 # @client.event
