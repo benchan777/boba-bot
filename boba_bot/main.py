@@ -19,7 +19,37 @@ db = Session() #Initialize Session class as db
 
 @bot.event
 async def on_ready():
+    for guild in bot.guilds:
+        for member in guild.members:
+            user = db.query(User.username).filter_by(user_id = member.id).first()
+
+            if user is None:
+                new_user = User(
+                    user_id = member.id,
+                    username = f"{member.name}#{member.discriminator}",
+                    server_id = guild.id,
+                    server_name = guild.name
+                )
+                db.add(new_user)
+                db.commit()
     print(f"Logged in as {bot.user}")
+
+@bot.event
+async def on_member_join(member):
+    for guild in bot.guilds:
+        for member in guild.members:
+            user = db.query(User.username).filter_by(user_id = member.id).first()
+
+            if user is None:
+                new_user = User(
+                    user_id = member.id,
+                    username = f"{member.name}#{member.discriminator}",
+                    server_id = guild.id,
+                    server_name = guild.name
+                )
+                db.add(new_user)
+                db.commit()
+    
 
 @bot.command(pass_context = True)
 async def location(ctx, *args):
@@ -61,10 +91,7 @@ async def boba(ctx, *args):
 @bot.command(pass_context = True)
 async def store_members(ctx):
     for member in ctx.guild.members:
-        print(member)
-
         user = db.query(User.username).filter_by(user_id = member.id).first()
-        print(user)
 
         if user is None:
             new_user = User(
