@@ -1,4 +1,4 @@
-from boba_bot.models import User, Base
+from boba_bot.models import User, Base, BobaShop
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -59,11 +59,12 @@ async def location(ctx, *args):
     db.commit()
 
     new_location = db.query(User.location).filter_by(user_id = ctx.message.author.id).one()
-    await ctx.send(f"{new_location} has been set as {ctx.message.author.mention}'s location!")
+    await ctx.send(f"{new_location[0]} has been set as {ctx.message.author.mention}'s location!")
 
 @bot.command(pass_context = True)
 async def boba(ctx, *args):
-    location = db.query(User.location).filter_by(user_id = ctx.message.author.id)
+    location = db.query(User.location).filter_by(user_id = ctx.message.author.id).first()
+    print(location[0])
 
     if location[0] is None:
         location = ' '.join(args)
@@ -73,6 +74,17 @@ async def boba(ctx, *args):
         store_names = []
         for store in store_info:
             store_names.append(store['name'])
+
+            store_db = db.query(BobaShop).filter_by(phone = store['phone']).first()
+
+            if store_db is None:
+                new_store = BobaShop(
+                    name = store['name'],
+                    phone = store['phone'],
+                    city = store['location']['city']
+                )
+                db.add(new_store)
+                db.commit()
 
         print('using user specified location')
         await ctx.send(f"Displaying stores in {location}: {store_names}")
@@ -84,6 +96,16 @@ async def boba(ctx, *args):
         store_names = []
         for store in store_info:
             store_names.append(store['name'])
+
+            store_db = db.query(BobaShop).filter_by(phone = store['phone']).first()
+
+            if store_db is None:
+                new_store = BobaShop(
+                    name = store['name'],
+                    phone = store['phone']
+                )
+                db.add(new_store)
+                db.commit()
         
         print('using stored location')
         await ctx.send(f"Your stored location is {location[0]}!\nDisplaying boba stores in {location[0]}:\n{store_names}")
