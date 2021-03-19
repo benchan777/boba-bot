@@ -88,19 +88,6 @@ async def boba(ctx, *args):
         print('using stored location')
         await ctx.send(f"Your stored location is {location[0]}!\nDisplaying boba stores in {location[0]}:\n{store_names}")
 
-@bot.command(pass_context = True)
-async def store_members(ctx):
-    for member in ctx.guild.members:
-        user = db.query(User.username).filter_by(user_id = member.id).first()
-
-        if user is None:
-            new_user = User(
-                user_id = member.id,
-                username = f"{member.name}#{member.discriminator}"
-            )
-            db.add(new_user)
-            db.commit()
-
 # #Functions to be triggered depending on user input
 # @client.event
 # async def on_message(message):
