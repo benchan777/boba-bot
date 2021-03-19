@@ -18,6 +18,7 @@ class User(Base):
     location = Column(String(200))
     server_id = Column(String(200))
     server_name = Column(String(200))
+    user_order_info = Column(String(200))
     user_order = relationship(
         'BobaShop',
         secondary = association_table,
@@ -28,7 +29,7 @@ class BobaShop(Base):
     __tablename__ = 'boba_store'
 
     id = Column(Integer, primary_key = True)
-    phone = Column(String(200))
+    store_id = Column(String(200))
     name = Column(String(200))
     city = Column(String(200))
     user_with_order = relationship(

@@ -8,7 +8,7 @@ from discord.ext import commands
 import os
 
 load_dotenv()
-yelp_api = YelpAPI(os.getenv('yelp_api_key'), timeout_s = 3.0)
+yelp_api = YelpAPI(os.getenv('yelp_api_key'), timeout_s = 3.0) #Initialize Yelp api
 
 bot = commands.Bot(command_prefix = '$', intents = discord.Intents.all()) #Initialize discord bot
 engine = create_engine('sqlite:///database.db') #Create SQLAlchemy engine
@@ -16,6 +16,7 @@ Base.metadata.create_all(engine) #Create database tables
 Session = sessionmaker(engine) #Define Session class
 Session.configure(bind = engine) #Connect Session class to the engine
 db = Session() #Initialize Session class as db
+from boba_bot.functions import store_info_embed, save_store_info
 
 @bot.event
 async def on_ready():
@@ -34,6 +35,7 @@ async def on_ready():
                 db.commit()
     print(f"Logged in as {bot.user}")
 
+#Adds new members to database on join
 @bot.event
 async def on_member_join(member):
     for guild in bot.guilds:
@@ -50,7 +52,7 @@ async def on_member_join(member):
                 db.add(new_user)
                 db.commit()
     
-
+#Sets the user's location in the database
 @bot.command(pass_context = True)
 async def location(ctx, *args):
     location = ' '.join(args)
@@ -61,34 +63,38 @@ async def location(ctx, *args):
     new_location = db.query(User.location).filter_by(user_id = ctx.message.author.id).one()
     await ctx.send(f"{new_location[0]} has been set as {ctx.message.author.mention}'s location!")
 
+#Displays information of boba stores near the specified location
 @bot.command(pass_context = True)
 async def boba(ctx, *args):
     location = db.query(User.location).filter_by(user_id = ctx.message.author.id).first()
     print(location[0])
 
+    #If the user has no saved location, use the input location
     if location[0] is None:
         location = ' '.join(args)
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
 
         store_names = []
+
         for store in store_info:
-            store_names.append(store['name'])
+            # description = 
 
-            store_db = db.query(BobaShop).filter_by(phone = store['phone']).first()
-
-            if store_db is None:
-                new_store = BobaShop(
-                    name = store['name'],
-                    phone = store['phone'],
-                    city = store['location']['city']
+            embed = store_info_embed(
+                store['name'],
+                store['url'],
+                # description,
+                store['image_url']
                 )
-                db.add(new_store)
-                db.commit()
+            await ctx.send(embed = embed)
+
+            store_names.append(store['name'])
+            save_store_info(store['name'], store['id'], store['location']['city'])
 
         print('using user specified location')
         await ctx.send(f"Displaying stores in {location}: {store_names}")
     
+    #If the user has a saved location, use the saved location
     else:
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
@@ -96,22 +102,24 @@ async def boba(ctx, *args):
         store_names = []
         for store in store_info:
             store_names.append(store['name'])
-
-            store_db = db.query(BobaShop).filter_by(phone = store['phone']).first()
-
-            if store_db is None:
-                new_store = BobaShop(
-                    name = store['name'],
-                    phone = store['phone']
-                )
-                db.add(new_store)
-                db.commit()
+            save_store_info(store['name'], store['id'], store['location']['city'])
         
         print('using stored location')
         await ctx.send(f"Your stored location is {location[0]}!\nDisplaying boba stores in {location[0]}:\n{store_names}")
 
-# #Functions to be triggered depending on user input
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
+#Save the user's desired order to the specified boba shop
+@bot.command(pass_context = True)
+async def order(ctx, store, *order_info):
+    user = db.query(User).filter_by(user_id = ctx.message.author.id).one()
+
+    user.user_order.append(db.query(BobaShop).filter_by(name = store).one())
+    user.user_order_info = ' '.join(order_info)
+    db.add(user)
+    db.commit()
+
+    await ctx.send(f"You have set {db.query(User.user_order_info).filter_by(user_id = ctx.message.author.id).first()[0]} as your desired drink from {store}!")
+
+#Displays user orders that are tied to the input store name
+@bot.command(pass_context = True)
+async def store(ctx, *name):
+    pass
