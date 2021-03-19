@@ -10,3 +10,5 @@ class User(Base):
     user_id = Column(Integer)
     username = Column(String(200))
     location = Column(String(200))
+    server_id = Column(String(200))
+    server_name = Column(String(200))
