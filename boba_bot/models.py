@@ -12,3 +12,11 @@ class User(Base):
     location = Column(String(200))
     server_id = Column(String(200))
     server_name = Column(String(200))
+
+class BobaShop(Base):
+    __tablename__ = 'boba_store'
+
+    id = Column(Integer, primary_key = True)
+    name = Column(String(200))
+    phone = Column(String(200))
+    city = Column(String(200))
