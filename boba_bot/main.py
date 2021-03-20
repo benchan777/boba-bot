@@ -78,8 +78,6 @@ async def boba(ctx, *args):
 
         #Iterate through all found stores
         for store in store_info:
-            # description = 
-
             #Some stores do not have price info and a key error will be returned. This mitigates that
             try:
                 price = store['price']
@@ -90,7 +88,7 @@ async def boba(ctx, *args):
             embed = store_info_embed(
                 store['name'],
                 store['url'],
-                # description,
+                f"{store['location']['address1']} {store['location']['city']}, {store['location']['state']} {store['location']['zip_code']}",
                 store['image_url'],
                 store['rating'],
                 price,
@@ -110,7 +108,6 @@ async def boba(ctx, *args):
 
         #Iterate through all found stores
         for store in store_info:
-
             #Some stores do not have price info and a key error will be returned. This mitigates that
             try:
                 price = store['price']
@@ -121,7 +118,7 @@ async def boba(ctx, *args):
             embed = store_info_embed(
                 store['name'],
                 store['url'],
-                # description,
+                f"{store['location']['address1']} {store['location']['city']}, {store['location']['state']} {store['location']['zip_code']}",
                 store['image_url'],
                 store['rating'],
                 store['price'],

@@ -4,8 +4,8 @@ import discord
 from discord.ext import commands
 
 #Function to create discord embeds with store information
-def store_info_embed(name, url, thumbnail, rating, price, phone):
-    embed = discord.Embed(title = name, url = url, description = name, color = 0x7b00ff)
+def store_info_embed(name, url, description, thumbnail, rating, price, phone):
+    embed = discord.Embed(title = name, url = url, description = description, color = 0x7b00ff)
     embed.set_thumbnail(url = thumbnail)
     embed.add_field(name = 'Rating', value = rating, inline = True)
     embed.add_field(name = 'Price', value = price, inline = True)
