@@ -71,41 +71,67 @@ async def boba(ctx, *args):
 
     #If the user has no saved location, use the input location
     if location[0] is None:
+        #Queries Yelp api for boba stores near input location
         location = ' '.join(args)
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
 
-        store_names = []
-
+        #Iterate through all found stores
         for store in store_info:
             # description = 
 
+            #Some stores do not have price info and a key error will be returned. This mitigates that
+            try:
+                price = store['price']
+            except:
+                price = 'N/A'
+
+            #Calls function to display store information in embed format in channel chat
             embed = store_info_embed(
                 store['name'],
                 store['url'],
                 # description,
-                store['image_url']
+                store['image_url'],
+                store['rating'],
+                price,
+                store['phone']
                 )
             await ctx.send(embed = embed)
 
-            store_names.append(store['name'])
             save_store_info(store['name'], store['id'], store['location']['city'])
 
         print('using user specified location')
-        await ctx.send(f"Displaying stores in {location}: {store_names}")
     
     #If the user has a saved location, use the saved location
     else:
+        #Queries Yelp api for boba stores near input location
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
 
-        store_names = []
+        #Iterate through all found stores
         for store in store_info:
-            store_names.append(store['name'])
+
+            #Some stores do not have price info and a key error will be returned. This mitigates that
+            try:
+                price = store['price']
+            except:
+                price = 'N/A'
+
+            #Calls function to display store information in embed format in channel chat
+            embed = store_info_embed(
+                store['name'],
+                store['url'],
+                # description,
+                store['image_url'],
+                store['rating'],
+                store['price'],
+                store['phone']
+                )
+            await ctx.send(embed = embed)
+
             save_store_info(store['name'], store['id'], store['location']['city'])
         
         print('using stored location')
-        await ctx.send(f"Your stored location is {location[0]}!\nDisplaying boba stores in {location[0]}:\n{store_names}")
 
 #Save the user's desired order to the specified boba shop
 @bot.command(pass_context = True)
