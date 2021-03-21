@@ -1,4 +1,4 @@
-from boba_bot.models import User, Base, BobaShop
+from boba_bot.models import User, Base, BobaShop, association_table
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -155,6 +155,9 @@ async def order(ctx, id, *order_info):
 #Displays user orders that are tied to the input store name
 @bot.command(pass_context = True)
 async def store(ctx, *args):
-
-    for order_info in db.query(BobaShop.user_with_order).filter_by(name = ' '.join(args)).all():
-        print(order_info)
+    store_id = db.query(BobaShop.id).filter_by(name = ' '.join(args)).first()[0]
+    order_info = db.query(association_table).filter_by(boba_store_id = store_id).all()
+    await ctx.send(f"Orders for {' '.join(args)}:")
+    for order in order_info:
+        user_id = order[0]
+        await ctx.send(f"{db.query(User.username).filter_by(id = user_id).first()[0]}: {db.query(User.user_order_info).filter_by(id = user_id).first()[0]}")
