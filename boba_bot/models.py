@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Table, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -13,7 +13,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True)
-    user_id = Column(Integer)
+    user_id = Column(BigInteger)
     username = Column(String(200))
     location = Column(String(200))
     server_id = Column(String(200))

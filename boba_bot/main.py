@@ -32,10 +32,7 @@ async def on_ready():
                     server_name = guild.name
                 )
                 db.add(new_user)
-                try:
-                    db.commit()
-                except:
-                    db.rollback()
+                db.commit()
     print(f"Logged in as {bot.user}")
 
 #Adds new members to database on join
