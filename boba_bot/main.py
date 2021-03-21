@@ -61,7 +61,7 @@ async def location(ctx, *args):
     db.commit()
 
     new_location = db.query(User.location).filter_by(user_id = ctx.message.author.id).one()
-    await ctx.send(f"{new_location[0]} has been set as {ctx.message.author.mention}'s location!")
+    await ctx.send(f"**{new_location[0]}** has been set as {ctx.message.author.mention}'s location!")
 
 #Displays information of boba stores near the specified location
 @bot.command(pass_context = True)
@@ -84,19 +84,24 @@ async def boba(ctx, *args):
             except:
                 price = 'N/A'
 
+            try:
+                phone = store['phone']
+            except:
+                phone = 'N/A'
+
+            save_store_info(store['name'], store['id'], store['location']['city'])
+
             #Calls function to display store information in embed format in channel chat
             embed = store_info_embed(
-                store['name'],
+                f"{store['name']} ({db.query(BobaShop.id).filter_by(store_id = store['id']).first()[0]})",
                 store['url'],
                 f"{store['location']['address1']} {store['location']['city']}, {store['location']['state']} {store['location']['zip_code']}",
                 store['image_url'],
                 store['rating'],
                 price,
-                store['phone']
+                phone
                 )
             await ctx.send(embed = embed)
-
-            save_store_info(store['name'], store['id'], store['location']['city'])
 
         print('using user specified location')
     
@@ -114,15 +119,20 @@ async def boba(ctx, *args):
             except:
                 price = 'N/A'
 
+            try:
+                phone = store['phone']
+            except:
+                phone = 'N/A'
+
             #Calls function to display store information in embed format in channel chat
             embed = store_info_embed(
-                store['name'],
+                f"{store['name']} ({db.query(BobaShop.id).filter_by(store_id = store['id']).first()[0]})",
                 store['url'],
                 f"{store['location']['address1']} {store['location']['city']}, {store['location']['state']} {store['location']['zip_code']}",
                 store['image_url'],
                 store['rating'],
-                store['price'],
-                store['phone']
+                price,
+                phone
                 )
             await ctx.send(embed = embed)
 
@@ -132,17 +142,19 @@ async def boba(ctx, *args):
 
 #Save the user's desired order to the specified boba shop
 @bot.command(pass_context = True)
-async def order(ctx, store, *order_info):
+async def order(ctx, id, *order_info):
     user = db.query(User).filter_by(user_id = ctx.message.author.id).one()
 
-    user.user_order.append(db.query(BobaShop).filter_by(name = store).one())
+    user.user_order.append(db.query(BobaShop).filter_by(id = str(id)).one())
     user.user_order_info = ' '.join(order_info)
     db.add(user)
     db.commit()
 
-    await ctx.send(f"You have set {db.query(User.user_order_info).filter_by(user_id = ctx.message.author.id).first()[0]} as your desired drink from {store}!")
+    await ctx.send(f"You have set **{db.query(User.user_order_info).filter_by(user_id = ctx.message.author.id).first()[0]}** as your desired drink from **{db.query(BobaShop.name).filter_by(id = str(id)).one()[0]}**!")
 
 #Displays user orders that are tied to the input store name
 @bot.command(pass_context = True)
-async def store(ctx, *name):
-    pass
+async def store(ctx, *args):
+
+    for order_info in db.query(BobaShop.user_with_order).filter_by(name = ' '.join(args)).all():
+        print(order_info)
