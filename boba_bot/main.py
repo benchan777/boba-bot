@@ -11,7 +11,7 @@ load_dotenv()
 yelp_api = YelpAPI(os.getenv('yelp_api_key'), timeout_s = 3.0) #Initialize Yelp api
 
 bot = commands.Bot(command_prefix = '$', intents = discord.Intents.all()) #Initialize discord bot
-engine = create_engine('postgres:///database.db') #Create SQLAlchemy engine
+engine = create_engine(os.getenv('DATABASE_URL')) #Create SQLAlchemy engine
 Base.metadata.create_all(engine) #Create database tables
 Session = sessionmaker(engine) #Define Session class
 Session.configure(bind = engine) #Connect Session class to the engine
