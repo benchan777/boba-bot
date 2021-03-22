@@ -125,6 +125,7 @@ async def boba(ctx, *args):
                 phone = 'N/A'
 
             #Calls function to display store information in embed format in channel chat
+            print({db.query(BobaShop.id).filter_by(store_id = store['id']).first())
             embed = store_info_embed(
                 f"{store['name']} ({db.query(BobaShop.id).filter_by(store_id = store['id']).first()[0]})",
                 store['url'],
