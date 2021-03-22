@@ -124,6 +124,8 @@ async def boba(ctx, *args):
             except:
                 phone = 'N/A'
 
+            save_store_info(store['name'], store['id'], store['location']['city'])
+
             #Calls function to display store information in embed format in channel chat
             embed = store_info_embed(
                 f"{store['name']} ({db.query(BobaShop.id).filter_by(store_id = store['id']).first()[0]})",
@@ -135,8 +137,6 @@ async def boba(ctx, *args):
                 phone
                 )
             await ctx.send(embed = embed)
-
-            save_store_info(store['name'], store['id'], store['location']['city'])
         
         print('using stored location')
 
