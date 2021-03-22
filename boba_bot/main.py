@@ -110,6 +110,8 @@ async def boba(ctx, *args):
         #Queries Yelp api for boba stores near input location
         result = yelp_api.search_query(term = 'boba', location = location, categories = 'Bubble Tea')
         store_info = result['businesses']
+        print(f"reached this point 1")
+        print(store_info)
 
         #Iterate through all found stores
         for store in store_info:
@@ -125,6 +127,7 @@ async def boba(ctx, *args):
                 phone = 'N/A'
 
             #Calls function to display store information in embed format in channel chat
+            print(f'reached this point 2')
             print(db.query(BobaShop.id).filter_by(store_id = store['id']).first())
             embed = store_info_embed(
                 f"{store['name']} ({db.query(BobaShop.id).filter_by(store_id = store['id']).first()[0]})",
