@@ -20,10 +20,12 @@ from boba_bot.functions import store_info_embed, save_store_info
 
 @bot.event
 async def on_ready():
+    #On bot start, scan for all members in a server and add them all to the database
     for guild in bot.guilds:
         for member in guild.members:
             user = db.query(User.username).filter_by(user_id = member.id).first()
 
+            #Only add user to database if they do not already exist
             if user is None:
                 new_user = User(
                     user_id = member.id,
@@ -42,6 +44,7 @@ async def on_member_join(member):
         for member in guild.members:
             user = db.query(User.username).filter_by(user_id = member.id).first()
 
+            #Only add user to database if they do not already exist
             if user is None:
                 new_user = User(
                     user_id = member.id,
@@ -155,8 +158,8 @@ async def order(ctx, id, *order_info):
 #Displays user orders that are tied to the input store name
 @bot.command(pass_context = True)
 async def store(ctx, *args):
-    store_id = db.query(BobaShop.id).filter_by(name = ' '.join(args)).first()[0]
-    order_info = db.query(association_table).filter_by(boba_store_id = store_id).all()
+    store_id = db.query(BobaShop.id).filter_by(name = ' '.join(args)).first()[0] #Retrives store id based on given store name
+    order_info = db.query(association_table).filter_by(boba_store_id = store_id).all() #Finds all users that have an order associated to specified store
     await ctx.send(f"Orders for {' '.join(args)}:")
     for order in order_info:
         user_id = order[0]

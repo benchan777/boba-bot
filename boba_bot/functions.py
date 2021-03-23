@@ -8,6 +8,7 @@ def store_info_embed(name, url, description, thumbnail, rating, price, phone):
     embed = discord.Embed(title = name, url = url, description = description, color = 0x7b00ff)
     embed.set_thumbnail(url = thumbnail)
 
+    #Discord embed returns an error if the length of the value field is 0
     embed_1 = 'N/A' if len(str(rating)) == 0 else rating
     embed_2 = 'N/A' if len(str(price)) == 0 else price
     embed_3 = 'N/A' if len(str(phone)) == 0 else phone
