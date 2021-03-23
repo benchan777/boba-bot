@@ -44,11 +44,7 @@ async def on_member_join(member):
         for member in guild.members:
             user = db.query(User.username).filter_by(user_id = member.id).first()
 
-<<<<<<< HEAD
             #Only add user to database if they do not alread exist
-=======
-            #Only add user to database if they do not already exist
->>>>>>> main
             if user is None:
                 new_user = User(
                     user_id = member.id,
