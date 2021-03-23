@@ -15,4 +15,4 @@ A discord bot that displays information about boba stores near the user input lo
 ## Screenshots
 | $boba | $location | $order | $store |
 |- |- |- |- |
-| ![](https://i.imgur.com/gzIfBER.png) | ![](https://i.imgur.com/GqFJLPt.png) | ![](https://i.imgur.com/mQBCbbQ.png) | ![](https://i.imgur.com/HvhDXw1.png) |
+| ![](https://i.imgur.com/vzD8N36.png) | ![](https://i.imgur.com/85eTdge.png) | ![](https://i.imgur.com/Zcf4TbA.png) | ![](https://i.imgur.com/6rjYQCY.png) |
