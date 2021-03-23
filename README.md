@@ -4,6 +4,19 @@ A discord bot that displays information about boba stores near the user input lo
 ## Invite Bot
 [Click here to invite bot to your server](https://discord.com/api/oauth2/authorize?client_id=821142110072864789&permissions=2148001856&scope=bot)
 
+
+## Running the bot locally
+1. Go to the Developer portal [here](https://discord.com/developers/applications) to create a new bot and retrieve its token.
+
+2. Clone the repo:
+`git clone https://github.com/benchan777/boba-bot.git`
+
+3. Place the token in your .env file with the format `discord_bot_token=<bot token here>`
+
+4. `pip3 install -r requirements.txt`
+
+5. `python3 app.py`
+
 ## Commands
 | Command 	| Description 	| Example 	|
 |-	|-	|-	|
