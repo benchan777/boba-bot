@@ -111,7 +111,8 @@ async def boba(ctx, *args):
                 store['rating'],
                 price,
                 phone,
-                'Yes' if open_now == True else 'No' if open_now == False else 'N/A'
+                'Yes' if open_now == True else 'No' if open_now == False else 'N/A',
+                0x00ff00 if open_now == True else 0xff0000 if open_now == False else 0xffff00
                 )
             await ctx.send(embed = embed)
 
@@ -155,7 +156,8 @@ async def boba(ctx, *args):
                 store['rating'],
                 price,
                 phone,
-                'Yes' if open_now == True else 'No' if open_now == False else 'N/A'
+                'Yes' if open_now == True else 'No' if open_now == False else 'N/A',
+                0x00ff00 if open_now == True else 0xff0000 if open_now == False else 0xffff00
                 )
             await ctx.send(embed = embed)
         

@@ -10,6 +10,7 @@ association_table = Table('association', Base.metadata,
 )
 
 class User(Base):
+    ''' Model for discord user information '''
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True)
@@ -26,6 +27,7 @@ class User(Base):
     )
 
 class BobaShop(Base):
+    ''' Model for queried boba shop information '''
     __tablename__ = 'boba_store'
 
     id = Column(Integer, primary_key = True)
