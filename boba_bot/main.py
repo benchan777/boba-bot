@@ -81,6 +81,9 @@ async def boba(ctx, *args):
 
         #Iterate through all found stores
         for store in store_info:
+            #Retrieve more specific info about each particular business
+            business_result = yelp_api.business_query(store['id'])
+
             #Some stores do not have price info and a key error will be returned. This mitigates that
             try:
                 price = store['price']
@@ -92,6 +95,11 @@ async def boba(ctx, *args):
             except:
                 phone = 'N/A'
 
+            try:
+                open_now = business_result['hours'][0]['is_open_now']
+            except:
+                open_now = 'N/A'
+
             save_store_info(store['name'], store['id'], store['location']['city'])
 
             #Calls function to display store information in embed format in channel chat
@@ -102,7 +110,8 @@ async def boba(ctx, *args):
                 store['image_url'],
                 store['rating'],
                 price,
-                phone
+                phone,
+                'Yes' if open_now == True else 'No' if open_now == False else 'N/A'
                 )
             await ctx.send(embed = embed)
 
@@ -116,6 +125,9 @@ async def boba(ctx, *args):
 
         #Iterate through all found stores
         for store in store_info:
+            #Retrieve more specific info about each particular business
+            business_result = yelp_api.business_query(store['id'])
+
             #Some stores do not have price info and a key error will be returned. This mitigates that
             try:
                 price = store['price']
@@ -127,6 +139,11 @@ async def boba(ctx, *args):
             except:
                 phone = 'N/A'
 
+            try:
+                open_now = business_result['hours'][0]['is_open_now']
+            except:
+                open_now = 'N/A'
+
             save_store_info(store['name'], store['id'], store['location']['city'])
 
             #Calls function to display store information in embed format in channel chat
@@ -137,7 +154,8 @@ async def boba(ctx, *args):
                 store['image_url'],
                 store['rating'],
                 price,
-                phone
+                phone,
+                'Yes' if open_now == True else 'No' if open_now == False else 'N/A'
                 )
             await ctx.send(embed = embed)
         
