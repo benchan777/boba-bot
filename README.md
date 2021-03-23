@@ -11,3 +11,8 @@ A discord bot that displays information about boba stores near the user input lo
 | `$location <location>` 	| Saves the specified location so it doesn't have to be entered again 	| $location San Francisco 	|
 | `$order <store #> <order info>` 	| Saves order information to specified store # 	| $order 4 Jasmine Milk Tea 	|
 | `$store <store name>` 	| Displays order information of all users who saved information to specified store 	| $store Boba Guys 	|
+
+## Screenshots
+| $boba | $location | $order | $store |
+|- |- |- |- |
+| ![](https://i.imgur.com/gzIfBER.png) | ![](https://i.imgur.com/GqFJLPt.png) | ![](https://i.imgur.com/mQBCbbQ.png) | ![](https://i.imgur.com/HvhDXw1.png) |

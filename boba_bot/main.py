@@ -137,7 +137,7 @@ async def boba(ctx, *args):
                 phone
                 )
             await ctx.send(embed = embed)
-
+        
         print('using stored location')
 
 #Save the user's desired order to the specified boba shop
